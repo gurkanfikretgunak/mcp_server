@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/gurkanfikretgunak/mcp_server/discussions
+    about: Ask questions and discuss ideas
+  - name: 📖 Documentation
+    url: https://github.com/gurkanfikretgunak/mcp_server#readme
+    about: Check the README and documentation

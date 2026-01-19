@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": [
+        "-m",
+        "python_package_mcp_server.cli",
+        "stdio"
+      ],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+[project]
+name = "python-package-mcp-server"
+version = "0.1.0"
+description = "Production-ready MCP server for managing Python packages using uv, with enterprise features and project indexing capabilities"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    {name = "Gurkan Fikret Gunak", email = "gurkanfikretgunak@example.com"}
+]
+license = {text = "MIT"}
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+    "structlog>=24.0.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+    "click>=8.1.0",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "tomli>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+mcp-server = "python_package_mcp_server.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = []
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
