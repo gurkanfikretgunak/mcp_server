@@ -132,9 +132,35 @@ The server provides the following tools:
 
 ## IDE Integration
 
+### Quick Setup Script
+
+Use the setup script to automatically configure your IDE:
+
+```bash
+# Interactive menu
+./scripts/setup_ide.sh
+
+# Or specify IDE directly
+./scripts/setup_ide.sh cursor      # Setup Cursor IDE
+./scripts/setup_ide.sh vscode      # Setup VS Code
+./scripts/setup_ide.sh deeplink    # Generate deep link for Cursor
+./scripts/setup_ide.sh all         # Setup all supported IDEs
+```
+
+**Windows PowerShell:**
+```powershell
+.\scripts\setup_ide.ps1 cursor
+.\scripts\setup_ide.ps1 vscode
+.\scripts\setup_ide.ps1 deeplink
+.\scripts\setup_ide.ps1 all
+```
+
 ### Cursor IDE
 
 The server is pre-configured for Cursor IDE. Configuration is in `.cursor/mcp_config.json`.
+
+**Deep Link Setup:**
+Run `./scripts/setup_ide.sh deeplink` to generate a deep link that you can open in Cursor to automatically add the MCP server.
 
 ### VS Code
 
@@ -142,6 +168,8 @@ VS Code configuration files are provided in `.vscode/`:
 - `settings.json` - Workspace settings
 - `launch.json` - Debug configurations
 - `extensions.json` - Recommended extensions
+
+**Note:** VS Code MCP integration requires the [MCP Extension](https://marketplace.visualstudio.com/items?itemName=modelcontextprotocol.mcp).
 
 ## Architecture
 
