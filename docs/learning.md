@@ -55,6 +55,20 @@ Example tools:
 - `index_project` - Index a project directory
 - `analyze_codebase` - Analyze codebase structure
 
+### Prompts
+
+Prompts are reusable prompt templates that servers expose to clients. They allow LLMs to use pre-defined, structured prompts with customizable arguments.
+
+- **Name**: Unique identifier
+- **Description**: What the prompt does
+- **Arguments**: Parameters that customize the prompt
+- **Messages**: Formatted prompt content (can include multiple messages with roles)
+
+Example prompts:
+- `analyze_package_dependencies` - Analyze dependencies and suggest updates
+- `code_review` - Review code for best practices
+- `dependency_audit` - Audit dependencies for security
+
 ### Transports
 
 MCP supports multiple transport mechanisms:
@@ -106,7 +120,23 @@ async def call_tool(name: str, arguments: dict) -> list:
     pass
 ```
 
-### 4. Transport Setup
+### 4. Prompt Registration
+
+Prompts are registered with two handlers:
+
+```python
+@server.list_prompts()
+async def list_prompts() -> list[Prompt]:
+    # Return list of available prompts
+    pass
+
+@server.get_prompt()
+async def get_prompt(name: str, arguments: dict) -> GetPromptResult:
+    # Return formatted prompt with arguments filled in
+    pass
+```
+
+### 5. Transport Setup
 
 The server runs with a transport:
 
@@ -137,6 +167,15 @@ async with stdio_server() as (read_stream, write_stream):
 4. Handler executes action (e.g., runs `uv pip install requests`)
 5. Server returns result
 6. Client forwards result to LLM
+
+### Prompt Usage
+
+1. LLM requests prompt: `code_review` with `{"file_path": "src/server.py"}`
+2. Client forwards prompt request to server
+3. Server's `get_prompt()` handler is called
+4. Handler fills in arguments and formats prompt text
+5. Server returns formatted prompt messages
+6. Client forwards prompt to LLM for processing
 
 ## Extending the Server
 
@@ -207,6 +246,53 @@ async def list_tools() -> list:
 async def call_tool(name: str, arguments: dict) -> list:
     if name == "my_tool":
         return await my_tool.handle_my_tool(arguments)
+```
+
+### Adding a New Prompt
+
+1. Add prompt definition to `list_prompts()` in `server.py`:
+
+```python
+@server.list_prompts()
+async def list_prompts() -> list[Prompt]:
+    return [
+        # ... existing prompts ...
+        Prompt(
+            name="my_prompt",
+            description="My prompt description",
+            arguments=[
+                PromptArgument(
+                    name="arg_name",
+                    description="Argument description",
+                    required=True
+                )
+            ]
+        )
+    ]
+```
+
+2. Add handler to `get_prompt()`:
+
+```python
+@server.get_prompt()
+async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> GetPromptResult:
+    arguments = arguments or {}
+    
+    # ... existing handlers ...
+    
+    elif name == "my_prompt":
+        arg_value = arguments.get("arg_name", "")
+        prompt_text = f"Custom prompt with {arg_value}"
+        
+        return GetPromptResult(
+            description="My prompt description",
+            messages=[
+                PromptMessage(
+                    role="user",
+                    content=TextContent(type="text", text=prompt_text)
+                )
+            ]
+        )
 ```
 
 ## Security Considerations

@@ -42,15 +42,85 @@ python -m python_package_mcp_server.cli dev --host localhost --port 8000
 
 ## Client Configuration
 
-### Cursor IDE
+### Quick Setup
 
-Add to your Cursor settings (`.cursor/mcp_config.json`):
+**Automated Setup (Recommended):**
+```bash
+# Linux/macOS
+./scripts/setup_ide.sh cursor
 
+# Windows PowerShell
+.\scripts\setup_ide.ps1 cursor
+```
+
+### Manual Configuration
+
+#### Cursor IDE
+
+**Option 1: Global Configuration** (`~/.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
     "python-package-manager": {
       "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    }
+  }
+}
+```
+
+**Option 2: Project-Specific** (`.cursor/mcp_config.json`):
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    }
+  }
+}
+```
+
+#### VS Code
+
+The server can be configured in VS Code using the MCP extension. See `.vscode/launch.json` for debug configurations.
+
+**Configuration** (`.vscode/settings.json`):
+```json
+{
+  "mcp.servers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": "${workspaceFolder}",
+        "MCP_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+#### Using Virtual Environment
+
+If using a virtual environment, use the venv Python path:
+
+**macOS/Linux:**
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": ".venv/bin/python",
       "args": ["-m", "python_package_mcp_server.cli", "stdio"],
       "env": {
         "MCP_PROJECT_ROOT": "."
@@ -60,9 +130,22 @@ Add to your Cursor settings (`.cursor/mcp_config.json`):
 }
 ```
 
-### VS Code
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": ".venv\\Scripts\\python.exe",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": "."
+      }
+    }
+  }
+}
+```
 
-The server can be configured in VS Code using the MCP extension. See `.vscode/launch.json` for debug configurations.
+For detailed configuration options, see the [MCP Configuration Guide](../docs/mcp-configuration-guide.md).
 
 ## Resource Examples
 

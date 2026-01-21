@@ -6,11 +6,12 @@ This comprehensive guide will help you use the MCP Inspector to test and debug t
 
 1. [Getting Started](#getting-started)
 2. [Resources Tab - Detailed Walkthrough](#resources-tab---detailed-walkthrough)
-3. [Tools Tab - Detailed Walkthrough](#tools-tab---detailed-walkthrough)
-4. [Logs Tab - Understanding Communication](#logs-tab---understanding-communication)
-5. [Practical Examples](#practical-examples)
-6. [Troubleshooting](#troubleshooting)
-7. [Best Practices](#best-practices)
+3. [Prompts Tab - Detailed Walkthrough](#prompts-tab---detailed-walkthrough)
+4. [Tools Tab - Detailed Walkthrough](#tools-tab---detailed-walkthrough)
+5. [Logs Tab - Understanding Communication](#logs-tab---understanding-communication)
+6. [Practical Examples](#practical-examples)
+7. [Troubleshooting](#troubleshooting)
+8. [Best Practices](#best-practices)
 
 ## Getting Started
 
@@ -48,11 +49,12 @@ The inspector will:
 
 ### Understanding the UI Layout
 
-The MCP Inspector UI consists of three main tabs:
+The MCP Inspector UI consists of four main tabs:
 
 1. **Resources Tab**: Browse and read available resources
-2. **Tools Tab**: Invoke tools and see results
-3. **Logs Tab**: Monitor JSON-RPC communication
+2. **Prompts Tab**: List and get prompt templates with arguments
+3. **Tools Tab**: Invoke tools and see results
+4. **Logs Tab**: Monitor JSON-RPC communication
 
 ### Navigation Basics
 
@@ -854,6 +856,165 @@ Resources are read-only data that provide information about your project, packag
 - Best practices reference
 - Type safety guidelines
 - Code organization
+
+## Prompts Tab - Detailed Walkthrough
+
+Prompts are reusable prompt templates that can be customized with arguments. They help standardize LLM interactions and encode best practices.
+
+### Understanding Prompts
+
+Prompts provide:
+- **Reusable Templates**: Pre-defined prompt structures
+- **Customizable Arguments**: Parameters to tailor prompts
+- **Formatted Output**: Ready-to-use prompt text for LLMs
+- **Best Practices**: Encoded domain expertise
+
+### Listing Prompts
+
+1. Navigate to **Prompts** tab
+2. Click **"List Prompts"** button
+3. View all available prompts in the list
+
+You should see 5 prompts:
+- `analyze_package_dependencies`
+- `code_review`
+- `project_setup_guide`
+- `dependency_audit`
+- `code_formatting_check`
+
+### Getting a Prompt
+
+1. Click on a prompt name in the list
+2. Fill in the arguments form:
+   - **Required arguments** (marked with *) must be provided
+   - **Optional arguments** can be left empty
+3. Click **"Get Prompt"** button
+4. View the formatted prompt text in the response area
+
+### Prompt Details
+
+#### analyze_package_dependencies
+
+**Arguments:**
+- `package_name` (optional): Specific package to analyze
+
+**Example:**
+```json
+{
+  "package_name": "requests"
+}
+```
+
+**Generated Prompt:**
+```
+Analyze the dependencies of the 'requests' package. Check for:
+- Outdated packages that need updates
+- Security vulnerabilities
+- Unused dependencies
+- Dependency conflicts
+Provide recommendations for updates and improvements.
+```
+
+#### code_review
+
+**Arguments:**
+- `file_path` (required): Path to file to review
+- `language` (optional): Programming language
+
+**Example:**
+```json
+{
+  "file_path": "src/server.py",
+  "language": "python"
+}
+```
+
+**Generated Prompt:**
+```
+Review the code in 'src/server.py' (python). Check for:
+- Code quality and best practices
+- Potential bugs or issues
+- Performance optimizations
+- Security concerns
+- Code style and formatting
+Provide constructive feedback and suggestions.
+```
+
+#### project_setup_guide
+
+**Arguments:**
+- `include_dependencies` (optional): Include dependency instructions
+
+**Example:**
+```json
+{
+  "include_dependencies": "true"
+}
+```
+
+#### dependency_audit
+
+**Arguments:** None
+
+**Example:**
+```json
+{}
+```
+
+**Generated Prompt:**
+```
+Perform a comprehensive dependency audit for this project. Check:
+- All installed packages and their versions
+- Outdated packages with available updates
+- Security vulnerabilities (CVEs)
+- License compatibility
+- Unused or redundant dependencies
+- Dependency conflicts
+Provide a detailed report with recommendations.
+```
+
+#### code_formatting_check
+
+**Arguments:**
+- `file_path` (required): Path to file or directory
+- `language` (required): Programming language
+
+**Example:**
+```json
+{
+  "file_path": "lib/main.dart",
+  "language": "dart"
+}
+```
+
+**Generated Prompt:**
+```
+Check if the code in 'lib/main.dart' follows dart formatting standards. Verify:
+- Indentation and spacing
+- Line length
+- Naming conventions
+- Import organization
+- Code style guidelines
+Report any formatting issues and suggest fixes.
+```
+
+### Using Prompts
+
+1. **Get the Prompt**: Use the Prompts tab to generate formatted prompt text
+2. **Copy the Text**: Copy the generated prompt text
+3. **Use with LLM**: Paste the prompt into your LLM interface
+4. **Combine with Resources/Tools**: The LLM can use resources and tools to fulfill the prompt
+
+### Prompt Workflow Example
+
+**Complete Workflow:**
+1. Get `dependency_audit` prompt
+2. LLM receives the prompt
+3. LLM uses `python:packages://installed` resource to get packages
+4. LLM uses `python:packages://outdated` resource to check updates
+5. LLM generates comprehensive audit report
+
+For more details, see the [Prompts Guide](prompts-guide.md).
 
 ## Tools Tab - Detailed Walkthrough
 

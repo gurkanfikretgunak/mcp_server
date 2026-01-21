@@ -82,6 +82,18 @@ The server can be configured using environment variables:
 - `MCP_PROJECT_ROOT`: Project root directory
 - `MCP_WORKSPACE_ROOT`: Workspace root directory
 
+## Prompts
+
+The server provides the following prompts (reusable prompt templates):
+
+- `analyze_package_dependencies` - Analyze package dependencies and suggest updates (optional: package_name)
+- `code_review` - Review code for best practices and potential issues (required: file_path, optional: language)
+- `project_setup_guide` - Generate a comprehensive project setup guide (optional: include_dependencies)
+- `dependency_audit` - Audit project dependencies for security and updates (no arguments)
+- `code_formatting_check` - Check if code follows formatting standards (required: file_path, language)
+
+For detailed information about prompts, see the [Prompts Guide](docs/prompts-guide.md).
+
 ## Resources
 
 The server exposes the following resources:
@@ -161,6 +173,34 @@ The server provides the following tools:
 - `typescript_type_check` - Type check TypeScript code using tsc
 - `typescript_generate_code` - Generate TypeScript code following standards and best practices
 - `typescript_check_standards` - Check if TypeScript code follows standards and best practices
+
+## Configuration
+
+### Adding to mcp.json
+
+To add this server to your `mcp.json` configuration file, see the [MCP Configuration Guide](docs/mcp-configuration-guide.md) for detailed instructions.
+
+**Quick Start:**
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    }
+  }
+}
+```
+
+**File Locations:**
+- **Cursor IDE**: `~/.cursor/mcp.json` or `.cursor/mcp_config.json`
+- **VS Code**: `.vscode/settings.json` (with MCP extension)
+- **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ## IDE Integration
 
