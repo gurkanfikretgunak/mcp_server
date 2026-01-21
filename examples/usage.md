@@ -147,6 +147,91 @@ If using a virtual environment, use the venv Python path:
 
 For detailed configuration options, see the [MCP Configuration Guide](../docs/mcp-configuration-guide.md).
 
+## Authentication Examples
+
+### Setting Up User Authentication
+
+1. **Enable User Authentication**:
+   ```bash
+   export MCP_ENABLE_USER_AUTH=true
+   export MCP_USERS_FILE=~/.mcp_server/users.json
+   ```
+
+2. **Create First Admin Account**:
+   ```bash
+   # With auto-generated API key
+   python -m python_package_mcp_server.cli create-admin --username admin
+   
+   # With custom API key
+   python -m python_package_mcp_server.cli create-admin --username admin --api-key my-secure-key-123
+   ```
+
+3. **Create Additional Users** (via MCP tool, admin only):
+   ```json
+   {
+     "tool": "create_user",
+     "arguments": {
+       "username": "developer1",
+       "role": "user"
+     }
+   }
+   ```
+
+### Using Authentication
+
+**HTTP Transport**:
+```bash
+# Include API key in request headers
+curl -H "X-API-Key: your-api-key" http://localhost:8000/health
+curl -H "Authorization: Bearer your-api-key" http://localhost:8000/health
+```
+
+**Stdio Transport**:
+```bash
+# Set API key in environment
+export MCP_API_KEY=your-api-key
+python -m python_package_mcp_server.cli stdio
+```
+
+**Client Configuration with API Key**:
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_ENABLE_USER_AUTH": "true",
+        "MCP_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+### User Management Examples
+
+**List All Users** (admin only):
+```json
+{
+  "tool": "list_users",
+  "arguments": {}
+}
+```
+
+**Delete a User** (admin only):
+```json
+{
+  "tool": "delete_user",
+  "arguments": {
+    "username": "user1"
+  }
+}
+```
+
+**Note**: Cannot delete the last admin user.
+
 ## Resource Examples
 
 ### List Installed Packages

@@ -9,7 +9,7 @@ A production-ready MCP (Model Context Protocol) server for managing Python packa
 - **Codebase Resources**: Search codebase, read files, extract symbols
 - **Language Standards Support**: Dart and TypeScript language standards, style guides, and best practices
 - **Code Quality Tools**: Format, lint, analyze, and validate code for Dart and TypeScript
-- **Enterprise Features**: Authentication, policy engine, audit logging
+- **Enterprise Features**: Role-based authentication (admin/user), policy engine, audit logging
 - **Dual Transport**: Support for stdio (local) and HTTP/SSE (enterprise) transports
 - **IDE Integration**: Pre-configured for Cursor and VS Code
 - **Easy Execution**: Simple scripts and CLI commands for Linux/macOS
@@ -73,14 +73,139 @@ The server can be configured using environment variables:
 - `MCP_TRANSPORT`: Transport type (`stdio` or `http`)
 - `MCP_HOST`: HTTP server host (default: `localhost`)
 - `MCP_PORT`: HTTP server port (default: `8000`)
-- `MCP_API_KEY`: API key for HTTP authentication
+- `MCP_API_KEY`: API key for HTTP authentication (legacy single API key mode)
 - `MCP_ENABLE_AUTH`: Enable authentication (`true`/`false`)
+- `MCP_ENABLE_USER_AUTH`: Enable user-based authentication (`true`/`false`)
+- `MCP_USERS_FILE`: Path to users JSON file (default: `~/.mcp_server/users.json`)
+- `MCP_SINGLE_API_KEY_MODE`: Use legacy single API key mode (`true`/`false`, default: `true`)
 - `MCP_ALLOWED_PACKAGES`: Comma-separated list of allowed package patterns
 - `MCP_BLOCKED_PACKAGES`: Comma-separated list of blocked package patterns
 - `MCP_LOG_LEVEL`: Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`)
 - `MCP_LOG_FORMAT`: Log format (`json` or `text`)
 - `MCP_PROJECT_ROOT`: Project root directory
 - `MCP_WORKSPACE_ROOT`: Workspace root directory
+
+## Authentication
+
+The server supports role-based authentication with admin and regular user roles.
+
+### Quick Setup
+
+1. **Enable User Authentication**:
+   ```bash
+   export MCP_ENABLE_USER_AUTH=true
+   export MCP_USERS_FILE=~/.mcp_server/users.json
+   ```
+
+2. **Create First Admin Account**:
+   ```bash
+   python -m python_package_mcp_server.cli create-admin --username admin --api-key <your-api-key>
+   ```
+   
+   If you don't provide an API key, one will be auto-generated. **Save it securely** - it won't be shown again!
+
+3. **Create Additional Users** (admin only):
+   Use the `create_user` MCP tool via your client:
+   ```json
+   {
+     "tool": "create_user",
+     "arguments": {
+       "username": "user1",
+       "role": "user"
+     }
+   }
+   ```
+
+### User Roles
+
+- **Admin (Level 1)**: Full access to all operations
+  - Can create/delete users
+  - Can execute all tools (install, uninstall, sync, etc.)
+  - Can access all resources
+  
+- **Regular User**: Read-only access
+  - Can read resources (packages, dependencies, codebase)
+  - Cannot execute write operations (install, uninstall, sync, etc.)
+  - Cannot create or delete users
+
+### Permissions Matrix
+
+| Operation | Admin | Regular User |
+|-----------|-------|--------------|
+| Read resources | ✅ | ✅ |
+| Install packages | ✅ | ❌ |
+| Uninstall packages | ✅ | ❌ |
+| Sync dependencies | ✅ | ❌ |
+| Create users | ✅ | ❌ |
+| Delete users | ✅ | ❌ |
+| List users | ✅ | ❌ |
+
+### User Management Tools
+
+The server provides the following user management tools (admin only):
+
+- `create_user`: Create a new user account
+  - Parameters: `username` (required), `api_key` (optional), `role` (admin/user, default: user)
+  - Returns: Created user info with API key (save it securely!)
+
+- `list_users`: List all users
+  - Returns: List of all users with their roles and creation dates
+
+- `delete_user`: Delete a user account
+  - Parameters: `username` (required)
+  - Note: Cannot delete the last admin user
+
+### Configuration
+
+**Environment Variables**:
+```bash
+# Enable user-based authentication
+export MCP_ENABLE_USER_AUTH=true
+
+# Set users file location (optional, defaults to ~/.mcp_server/users.json)
+export MCP_USERS_FILE=~/.mcp_server/users.json
+
+# For stdio transport, set API key for authentication
+export MCP_API_KEY=<your-api-key>
+```
+
+**Users File** (`~/.mcp_server/users.json`):
+```json
+{
+  "users": [
+    {
+      "username": "admin",
+      "api_key_hash": "hashed-api-key",
+      "role": "admin",
+      "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "username": "user1",
+      "api_key_hash": "hashed-api-key-2",
+      "role": "user",
+      "created_at": "2024-01-02T00:00:00Z"
+    }
+  ]
+}
+```
+
+**Security Notes**:
+- API keys are stored as SHA-256 hashes
+- Users file has restrictive permissions (`chmod 600`)
+- Only the first account can be created via CLI (becomes admin)
+- Subsequent accounts must be created by admin users via `create_user` tool
+- The last admin user cannot be deleted
+
+### Backward Compatibility
+
+The server maintains backward compatibility with the legacy single API key mode:
+- If `MCP_ENABLE_USER_AUTH=false` (default), uses single API key authentication
+- If `MCP_ENABLE_USER_AUTH=true`, uses user-based authentication
+- Existing installations continue working without changes
+
+For detailed authentication setup instructions, see the [Authentication Setup Guide](docs/auth-setup-guide.md).
+
+For configuration options, see the [MCP Configuration Guide](docs/mcp-configuration-guide.md).
 
 ## Prompts
 

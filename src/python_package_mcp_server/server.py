@@ -18,9 +18,30 @@ from mcp.types import (
 from .config import config
 from .resources import codebase, dependencies, packages, project_index, dart_standards, typescript_standards
 from .tools import env, install, sync, dart, typescript
+from .security.auth import AuthMiddleware
+from .security.user_manager import UserManager
+
+# Import auth tools only if user auth is enabled
+if config.enable_user_auth:
+    from .tools import auth
+else:
+    auth = None
 
 # Initialize server
 server = Server("python-package-mcp-server")
+
+# Initialize user manager and auth middleware
+user_manager = UserManager(config.users_file) if config.enable_user_auth else None
+auth_middleware = AuthMiddleware(
+    api_key=config.api_key,
+    enable_auth=config.enable_auth,
+    user_manager=user_manager,
+    enable_user_auth=config.enable_user_auth,
+    single_api_key_mode=config.single_api_key_mode,
+)
+
+# Global user context (set per request)
+current_user_context: dict[str, Any] = {}
 
 
 # Register resources
@@ -282,6 +303,8 @@ async def list_tools() -> list:
     tools.extend(env.get_env_tools())
     tools.extend(dart.get_dart_tools())
     tools.extend(typescript.get_typescript_tools())
+    if config.enable_user_auth and auth:
+        tools.extend(auth.get_auth_tools())
     return tools
 
 
@@ -289,6 +312,20 @@ async def list_tools() -> list:
 async def call_tool(name: str, arguments: dict[str, Any] | None) -> list:
     """Handle tool invocation."""
     arguments = arguments or {}
+    
+    # Get current user from context
+    current_user = current_user_context.get("user")
+    
+    # Check permissions for write operations
+    if config.enable_user_auth and current_user:
+        if not auth_middleware.check_permission(current_user, name):
+            from mcp.types import TextContent
+            return [
+                TextContent(
+                    type="text",
+                    text=f"Error: Permission denied. Operation '{name}' requires admin privileges.",
+                )
+            ]
 
     # Install tools
     if name == "install":
@@ -344,12 +381,38 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list:
     elif name == "typescript_check_standards":
         return await typescript.handle_typescript_check_standards(arguments)
 
+    # Auth tools (only available when user auth is enabled)
+    elif name == "create_user":
+        if not config.enable_user_auth or not auth:
+            from mcp.types import TextContent
+            return [TextContent(type="text", text="Error: User authentication is not enabled")]
+        return await auth.handle_create_user(arguments, current_user)
+    elif name == "list_users":
+        if not config.enable_user_auth or not auth:
+            from mcp.types import TextContent
+            return [TextContent(type="text", text="Error: User authentication is not enabled")]
+        return await auth.handle_list_users(arguments, current_user)
+    elif name == "delete_user":
+        if not config.enable_user_auth or not auth:
+            from mcp.types import TextContent
+            return [TextContent(type="text", text="Error: User authentication is not enabled")]
+        return await auth.handle_delete_user(arguments, current_user)
+
     else:
         raise ValueError(f"Unknown tool: {name}")
 
 
 async def run_stdio() -> None:
     """Run server with stdio transport."""
+    # Authenticate user for stdio transport if user auth is enabled
+    if config.enable_user_auth and config.api_key:
+        try:
+            user = auth_middleware.authenticate_user(config.api_key)
+            current_user_context["user"] = user
+        except Exception:
+            # If auth fails, continue without user (for backward compatibility)
+            pass
+    
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, server.create_initialization_options())
 

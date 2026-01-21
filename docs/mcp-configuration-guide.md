@@ -511,8 +511,11 @@ All configuration options are set via environment variables in the `env` section
 | `MCP_LOG_FORMAT` | Log format | `json` | `json`, `text` |
 | `MCP_HOST` | HTTP server host | `localhost` | `0.0.0.0` |
 | `MCP_PORT` | HTTP server port | `8000` | `8080` |
-| `MCP_API_KEY` | API key for HTTP auth | `None` | `your-secret-key` |
+| `MCP_API_KEY` | API key for HTTP auth (legacy mode) | `None` | `your-secret-key` |
 | `MCP_ENABLE_AUTH` | Enable authentication | `false` | `true`, `false` |
+| `MCP_ENABLE_USER_AUTH` | Enable user-based authentication | `false` | `true`, `false` |
+| `MCP_USERS_FILE` | Path to users JSON file | `~/.mcp_server/users.json` | `/path/to/users.json` |
+| `MCP_SINGLE_API_KEY_MODE` | Use legacy single API key mode | `true` | `true`, `false` |
 | `MCP_ALLOWED_PACKAGES` | Allowed package patterns | `[]` | `requests,pytest.*` |
 | `MCP_BLOCKED_PACKAGES` | Blocked package patterns | `[]` | `malicious.*` |
 
@@ -755,6 +758,40 @@ pip show python-package-mcp-server
   }
 }
 ```
+
+## Authentication Configuration
+
+### User-Based Authentication
+
+For multi-user deployments, enable user-based authentication:
+
+```json
+{
+  "mcpServers": {
+    "python-package-manager": {
+      "command": "python",
+      "args": ["-m", "python_package_mcp_server.cli", "stdio"],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_ENABLE_USER_AUTH": "true",
+        "MCP_USERS_FILE": "~/.mcp_server/users.json",
+        "MCP_API_KEY": "<your-api-key>"
+      }
+    }
+  }
+}
+```
+
+**First Admin Setup**:
+```bash
+python -m python_package_mcp_server.cli create-admin --username admin
+```
+
+**User Roles**:
+- **Admin**: Full access to all operations
+- **Regular User**: Read-only access (resources only)
+
+For detailed authentication documentation, see the [README](../README.md#authentication).
 
 ## Additional Resources
 

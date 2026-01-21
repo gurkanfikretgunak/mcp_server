@@ -13,6 +13,38 @@
         "MCP_LOG_FORMAT": "json"
       }
     },
+    "python-package-manager-auth": {
+      "command": "python",
+      "args": [
+        "-m",
+        "python_package_mcp_server.cli",
+        "stdio"
+      ],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_ENABLE_AUTH": "true",
+        "MCP_API_KEY": "your-api-key-here",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    },
+    "python-package-manager-user-auth": {
+      "command": "python",
+      "args": [
+        "-m",
+        "python_package_mcp_server.cli",
+        "stdio"
+      ],
+      "env": {
+        "MCP_PROJECT_ROOT": ".",
+        "MCP_ENABLE_AUTH": "true",
+        "MCP_ENABLE_USER_AUTH": "true",
+        "MCP_USERS_FILE": "~/.mcp_server/users.json",
+        "MCP_API_KEY": "your-admin-api-key-here",
+        "MCP_LOG_LEVEL": "INFO",
+        "MCP_LOG_FORMAT": "json"
+      }
+    },
     "python-package-manager-http": {
       "command": "python",
       "args": [

@@ -22,6 +22,11 @@ class ServerConfig(BaseModel):
     # Security settings
     api_key: Optional[str] = Field(default=None, description="API key for HTTP transport")
     enable_auth: bool = Field(default=False, description="Enable authentication")
+    
+    # User authentication settings
+    enable_user_auth: bool = Field(default=False, description="Enable user-based authentication")
+    users_file: Optional[Path] = Field(default=None, description="Path to users JSON file")
+    single_api_key_mode: bool = Field(default=True, description="Use legacy single API key mode")
 
     # Policy settings
     allowed_packages: list[str] = Field(default_factory=list, description="Allowed package patterns")
@@ -58,6 +63,11 @@ class ServerConfig(BaseModel):
             workspace_root=Path(os.getenv("MCP_WORKSPACE_ROOT", ".")).resolve()
             if os.getenv("MCP_WORKSPACE_ROOT")
             else None,
+            enable_user_auth=os.getenv("MCP_ENABLE_USER_AUTH", "false").lower() == "true",
+            users_file=Path(os.getenv("MCP_USERS_FILE", "~/.mcp_server/users.json")).expanduser().resolve()
+            if os.getenv("MCP_USERS_FILE")
+            else Path.home() / ".mcp_server" / "users.json",
+            single_api_key_mode=os.getenv("MCP_SINGLE_API_KEY_MODE", "true").lower() == "true",
         )
 
 

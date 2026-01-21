@@ -6,18 +6,50 @@ This guide covers enterprise deployment considerations, security best practices,
 
 ### Authentication
 
-Always enable authentication for HTTP transport:
+The server supports two authentication modes:
+
+#### 1. User-Based Authentication (Recommended)
+
+Enable role-based authentication with admin and user roles:
+
+```bash
+export MCP_ENABLE_USER_AUTH=true
+export MCP_USERS_FILE=~/.mcp_server/users.json
+export MCP_API_KEY=<admin-api-key>
+```
+
+**Setup**:
+1. Create first admin account:
+   ```bash
+   python -m python_package_mcp_server.cli create-admin --username admin
+   ```
+2. Create additional users via `create_user` tool (admin only)
+
+**User Roles**:
+- **Admin**: Full access to all operations
+- **Regular User**: Read-only access (resources only, no write operations)
+
+**Security Features**:
+- API keys stored as SHA-256 hashes
+- Users file has restrictive permissions (`chmod 600`)
+- Only first account can be created via CLI
+- Last admin user cannot be deleted
+
+#### 2. Legacy Single API Key Mode
+
+For backward compatibility:
 
 ```bash
 export MCP_ENABLE_AUTH=true
 export MCP_API_KEY="your-secure-api-key-here"
+export MCP_SINGLE_API_KEY_MODE=true
 ```
 
-Use strong API keys:
-- Minimum 32 characters
-- Randomly generated
-- Stored securely (environment variables, secrets manager)
-- Rotated regularly
+**Best Practices**:
+- Use strong API keys (minimum 32 characters, randomly generated)
+- Store API keys securely (environment variables, secrets manager)
+- Rotate API keys regularly
+- Use user-based authentication for multi-user deployments
 
 ### Policy Enforcement
 
@@ -106,6 +138,10 @@ spec:
         env:
         - name: MCP_ENABLE_AUTH
           value: "true"
+        - name: MCP_ENABLE_USER_AUTH
+          value: "true"
+        - name: MCP_USERS_FILE
+          value: "/data/users.json"
         - name: MCP_API_KEY
           valueFrom:
             secretKeyRef:
