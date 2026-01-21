@@ -99,10 +99,10 @@ GetPromptResult(
 
 ## Available Prompts
 
-This server provides 18 prompts organized into three categories:
+This server provides 19 prompts organized into three categories:
 
 - **General Prompts** (5): Cross-language prompts for common tasks
-- **Dart-Specific Prompts** (6): Prompts tailored for Dart/Flutter development
+- **Dart-Specific Prompts** (7): Prompts tailored for Dart/Flutter development
 - **TypeScript-Specific Prompts** (7): Prompts tailored for TypeScript development
 
 ### General Prompts
@@ -358,7 +358,35 @@ Report any formatting issues and suggest fixes.
 - State management improvements
 - Code organization
 
-### 9. dart_test_generation
+### 9. dart_abstract_base_widget
+
+**Purpose**: Create abstract base widget classes for Flutter following best practices.
+
+**Arguments**:
+- `widget_name` (required): Name of the abstract base widget to create
+- `file_path` (optional): Path where the abstract base widget should be created
+- `widget_type` (optional): Type of widget - `stateless`, `stateful`, or `custom`
+
+**Example Usage**:
+```json
+{
+  "name": "dart_abstract_base_widget",
+  "arguments": {
+    "widget_name": "BaseFormField",
+    "file_path": "lib/widgets/base_form_field.dart",
+    "widget_type": "stateless"
+  }
+}
+```
+
+**Use Cases**:
+- Creating reusable widget abstractions
+- Defining common widget interfaces
+- Widget hierarchy design
+- Code reusability and extensibility
+- Following Flutter best practices for abstract widgets
+
+### 10. dart_test_generation
 
 **Purpose**: Generate comprehensive tests for Dart code.
 
@@ -383,7 +411,7 @@ Report any formatting issues and suggest fixes.
 - Widget test creation
 - Integration test setup
 
-### 10. dart_null_safety_check
+### 11. dart_null_safety_check
 
 **Purpose**: Check Dart code for null safety compliance and migration needs.
 
@@ -406,7 +434,7 @@ Report any formatting issues and suggest fixes.
 - Type safety improvements
 - Code modernization
 
-### 11. dart_architecture_review
+### 12. dart_architecture_review
 
 **Purpose**: Review Dart/Flutter project architecture and suggest improvements.
 

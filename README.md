@@ -221,6 +221,7 @@ The server provides the following prompts (reusable prompt templates):
 
 ### Dart-Specific Prompts
 
+- `dart_abstract_base_widget` - Create abstract base widget classes for Flutter following best practices (required: widget_name, optional: file_path, widget_type)
 - `dart_migration_guide` - Generate migration guide for Dart/Flutter version upgrades (optional: from_version, to_version, file_path)
 - `dart_performance_optimization` - Analyze and optimize Dart code for performance (required: file_path, optional: focus_area)
 - `dart_widget_refactoring` - Refactor Flutter widgets following best practices (required: file_path, optional: refactoring_type)

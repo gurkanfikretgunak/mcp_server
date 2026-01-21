@@ -127,6 +127,7 @@ Cross-language prompts for common development tasks:
 ### Dart Prompts (`dart/`)
 
 Dart/Flutter-specific prompts:
+- `dart_abstract_base_widget.md`
 - `dart_migration_guide.md`
 - `dart_performance_optimization.md`
 - `dart_widget_refactoring.md`
