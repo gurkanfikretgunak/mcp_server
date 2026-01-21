@@ -8,8 +8,8 @@ from mcp.server.stdio import stdio_server
 from mcp.types import Resource, ResourceTemplate
 
 from .config import config
-from .resources import codebase, dependencies, packages, project_index
-from .tools import env, install, sync
+from .resources import codebase, dependencies, packages, project_index, dart_standards, typescript_standards
+from .tools import env, install, sync, dart, typescript
 
 # Initialize server
 server = Server("python-package-mcp-server")
@@ -24,6 +24,8 @@ async def list_resources() -> list[Resource]:
     resources.extend(dependencies.get_dependency_resources())
     resources.extend(project_index.get_project_index_resources())
     resources.extend(codebase.get_codebase_resources())
+    resources.extend(dart_standards.get_dart_resources())
+    resources.extend(typescript_standards.get_typescript_resources())
     return resources
 
 
@@ -48,6 +50,14 @@ async def read_resource(uri: str, params: dict[str, Any] | None = None) -> str:
     if uri.startswith("codebase://"):
         return codebase.read_codebase_resource(uri, params)
 
+    # Dart standards resources
+    if uri.startswith("dart:standards://"):
+        return dart_standards.read_dart_resource(uri)
+
+    # TypeScript standards resources
+    if uri.startswith("typescript:standards://"):
+        return typescript_standards.read_typescript_resource(uri)
+
     raise ValueError(f"Unknown resource URI: {uri}")
 
 
@@ -59,6 +69,8 @@ async def list_resource_templates() -> list[ResourceTemplate]:
     templates.extend(dependencies.get_dependency_resource_templates())
     templates.extend(project_index.get_project_index_resource_templates())
     templates.extend(codebase.get_codebase_resource_templates())
+    templates.extend(dart_standards.get_dart_resource_templates())
+    templates.extend(typescript_standards.get_typescript_resource_templates())
     return templates
 
 
@@ -70,6 +82,8 @@ async def list_tools() -> list:
     tools.extend(install.get_install_tools())
     tools.extend(sync.get_sync_tools())
     tools.extend(env.get_env_tools())
+    tools.extend(dart.get_dart_tools())
+    tools.extend(typescript.get_typescript_tools())
     return tools
 
 
@@ -107,6 +121,30 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list:
         return await env.handle_discover_projects(arguments)
     elif name == "analyze_codebase":
         return await env.handle_analyze_codebase(arguments)
+
+    # Dart tools
+    elif name == "dart_format":
+        return await dart.handle_dart_format(arguments)
+    elif name == "dart_analyze":
+        return await dart.handle_dart_analyze(arguments)
+    elif name == "dart_fix":
+        return await dart.handle_dart_fix(arguments)
+    elif name == "dart_generate_code":
+        return await dart.handle_dart_generate_code(arguments)
+    elif name == "dart_check_standards":
+        return await dart.handle_dart_check_standards(arguments)
+
+    # TypeScript tools
+    elif name == "typescript_format":
+        return await typescript.handle_typescript_format(arguments)
+    elif name == "typescript_lint":
+        return await typescript.handle_typescript_lint(arguments)
+    elif name == "typescript_type_check":
+        return await typescript.handle_typescript_type_check(arguments)
+    elif name == "typescript_generate_code":
+        return await typescript.handle_typescript_generate_code(arguments)
+    elif name == "typescript_check_standards":
+        return await typescript.handle_typescript_check_standards(arguments)
 
     else:
         raise ValueError(f"Unknown tool: {name}")

@@ -7,6 +7,8 @@ A production-ready MCP (Model Context Protocol) server for managing Python packa
 - **Package Management**: Install, uninstall, add, remove, sync, and lock Python packages using `uv`
 - **Project Indexing**: Discover and index project structure for LLM-assisted development
 - **Codebase Resources**: Search codebase, read files, extract symbols
+- **Language Standards Support**: Dart and TypeScript language standards, style guides, and best practices
+- **Code Quality Tools**: Format, lint, analyze, and validate code for Dart and TypeScript
 - **Enterprise Features**: Authentication, policy engine, audit logging
 - **Dual Transport**: Support for stdio (local) and HTTP/SSE (enterprise) transports
 - **IDE Integration**: Pre-configured for Cursor and VS Code
@@ -108,6 +110,20 @@ The server exposes the following resources:
 - `codebase://file` - Read specific file content with line numbers
 - `codebase://symbols` - Extract symbols (functions, classes) from codebase
 
+### Dart Standards Resources
+
+- `dart:standards://effective-dart` - Effective Dart guidelines (style, documentation, usage)
+- `dart:standards://style-guide` - Dart style guide with naming conventions and formatting rules
+- `dart:standards://linter-rules` - Complete list of Dart linter rules and descriptions
+- `dart:standards://best-practices` - Dart best practices for code quality and maintainability
+
+### TypeScript Standards Resources
+
+- `typescript:standards://style-guide` - TypeScript style guide with naming conventions and formatting rules
+- `typescript:standards://tsconfig-options` - Recommended tsconfig.json compiler options and meanings
+- `typescript:standards://eslint-rules` - ESLint rules for TypeScript code quality and consistency
+- `typescript:standards://best-practices` - TypeScript best practices for type safety and code quality
+
 ## Tools
 
 The server provides the following tools:
@@ -129,6 +145,22 @@ The server provides the following tools:
 - `refresh_index` - Refresh project index cache
 - `discover_projects` - Discover multiple projects in a workspace
 - `analyze_codebase` - Analyze codebase structure and extract metadata
+
+### Dart Tools
+
+- `dart_format` - Format Dart code according to Dart style guide
+- `dart_analyze` - Analyze Dart code for errors and warnings
+- `dart_fix` - Apply automated fixes to Dart code
+- `dart_generate_code` - Generate Dart code following standards and best practices
+- `dart_check_standards` - Check if Dart code follows standards and best practices
+
+### TypeScript Tools
+
+- `typescript_format` - Format TypeScript code using Prettier
+- `typescript_lint` - Lint TypeScript code using ESLint
+- `typescript_type_check` - Type check TypeScript code using tsc
+- `typescript_generate_code` - Generate TypeScript code following standards and best practices
+- `typescript_check_standards` - Check if TypeScript code follows standards and best practices
 
 ## IDE Integration
 
@@ -202,6 +234,96 @@ pytest tests/
 black src/
 ruff check src/
 ```
+
+### Testing Tools
+
+- **Unit Tests**: Run `pytest tests/` for automated test suite
+- **MCP Inspector**: Use `./scripts/inspect.sh` for interactive testing and debugging (see below)
+
+### Testing with MCP Inspector
+
+MCP Inspector is an interactive developer tool for testing and debugging MCP servers. It provides a web-based UI to inspect resources, test tools, and monitor server communication in real-time.
+
+#### Prerequisites
+
+- Node.js installed (for `npx` command)
+- Python virtual environment set up
+
+#### Running Inspector
+
+**Linux/macOS:**
+```bash
+# Run inspector with stdio transport (default)
+./scripts/inspect.sh
+
+# Run inspector with HTTP transport
+./scripts/inspect.sh --transport http --host localhost --port 8000
+
+# Use custom ports
+./scripts/inspect.sh --client-port 8080 --server-port 9000
+
+# Run with debug logging
+MCP_LOG_LEVEL=DEBUG ./scripts/inspect.sh
+```
+
+**Windows PowerShell:**
+```powershell
+# Run inspector with stdio transport (default)
+.\scripts\inspect.ps1
+
+# Run inspector with HTTP transport
+.\scripts\inspect.ps1 -Transport http -Host localhost -Port 8000
+
+# Use custom ports
+.\scripts\inspect.ps1 -ClientPort 8080 -ServerPort 9000
+```
+
+#### Inspector Features
+
+Once the inspector starts, it will open a web UI in your browser (default: `http://localhost:5173`). You can:
+
+- **Resources Tab**: Browse and test all available resources
+  - View `python:packages://installed` and `python:packages://outdated`
+  - Test project index resources
+  - Read Dart and TypeScript standards resources
+
+- **Tools Tab**: Test all available tools interactively
+  - Test package management tools (`install`, `uninstall`, `sync`)
+  - Test Dart tools (`dart_format`, `dart_analyze`, `dart_fix`)
+  - Test TypeScript tools (`typescript_format`, `typescript_lint`)
+
+- **Logs Tab**: Monitor real-time JSON-RPC communication
+  - View all requests and responses
+  - Debug server communication
+  - See errors and warnings
+
+#### Transport Modes
+
+1. **Stdio Mode** (default): Direct connection to Python server
+   - Best for local development and testing
+   - No separate server process needed
+
+2. **HTTP Mode**: Connect to running HTTP server
+   - Requires server to be running separately: `./scripts/run_http.sh`
+   - Useful for testing enterprise deployments
+   - Supports authentication headers
+
+#### Troubleshooting
+
+**Inspector doesn't start:**
+- Ensure Node.js is installed: `node --version`
+- Try: `npx -y @modelcontextprotocol/inspector@latest`
+
+**Port conflicts:**
+- Use custom ports: `./scripts/inspect.sh --client-port 8080`
+- Check if ports are already in use
+
+**HTTP mode connection fails:**
+- Ensure HTTP server is running: `./scripts/run_http.sh`
+- Check host and port match server configuration
+- Verify authentication if enabled
+
+For more information, see the [official MCP Inspector documentation](https://modelcontextprotocol.io/docs/tools/inspector).
 
 ## License
 
