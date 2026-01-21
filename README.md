@@ -211,11 +211,32 @@ For configuration options, see the [MCP Configuration Guide](docs/mcp-configurat
 
 The server provides the following prompts (reusable prompt templates):
 
+### General Prompts
+
 - `analyze_package_dependencies` - Analyze package dependencies and suggest updates (optional: package_name)
 - `code_review` - Review code for best practices and potential issues (required: file_path, optional: language)
 - `project_setup_guide` - Generate a comprehensive project setup guide (optional: include_dependencies)
 - `dependency_audit` - Audit project dependencies for security and updates (no arguments)
 - `code_formatting_check` - Check if code follows formatting standards (required: file_path, language)
+
+### Dart-Specific Prompts
+
+- `dart_migration_guide` - Generate migration guide for Dart/Flutter version upgrades (optional: from_version, to_version, file_path)
+- `dart_performance_optimization` - Analyze and optimize Dart code for performance (required: file_path, optional: focus_area)
+- `dart_widget_refactoring` - Refactor Flutter widgets following best practices (required: file_path, optional: refactoring_type)
+- `dart_test_generation` - Generate comprehensive tests for Dart code (required: file_path, optional: test_framework)
+- `dart_null_safety_check` - Check Dart code for null safety compliance (required: file_path)
+- `dart_architecture_review` - Review Dart/Flutter project architecture and suggest improvements (optional: project_path, architecture_pattern)
+
+### TypeScript-Specific Prompts
+
+- `typescript_migration_guide` - Generate migration guide for JavaScript to TypeScript or version upgrades (optional: from_language, to_version, file_path)
+- `typescript_type_optimization` - Optimize TypeScript types for better type safety and performance (required: file_path, optional: focus_area)
+- `typescript_refactoring` - Refactor TypeScript code following best practices (required: file_path, optional: refactoring_type)
+- `typescript_test_generation` - Generate comprehensive tests for TypeScript code (required: file_path, optional: test_framework)
+- `typescript_config_review` - Review and optimize tsconfig.json configuration (optional: config_path)
+- `typescript_decorator_guide` - Guide for using TypeScript decorators and metadata (optional: use_case)
+- `typescript_generics_guide` - Guide for using TypeScript generics effectively (optional: file_path, complexity_level)
 
 For detailed information about prompts, see the [Prompts Guide](docs/prompts-guide.md).
 

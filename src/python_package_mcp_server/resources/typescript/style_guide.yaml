@@ -1,0 +1,8 @@
+uri: typescript:standards://style-guide
+name: TypeScript Style Guide
+description: TypeScript style guide with naming conventions and formatting rules
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.typescript_standards
+  function: read_typescript_resource
+uriTemplate: typescript:standards://style-guide

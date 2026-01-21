@@ -1,0 +1,8 @@
+uri: typescript:standards://best-practices
+name: TypeScript Best Practices
+description: TypeScript best practices for type safety and code quality
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.typescript_standards
+  function: read_typescript_resource
+uriTemplate: typescript:standards://best-practices

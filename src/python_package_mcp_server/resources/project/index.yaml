@@ -1,0 +1,8 @@
+uri: project://index
+name: Project Index
+description: Complete project index with structure, files, and metadata
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.project_index
+  function: read_project_index_resource
+uriTemplate: project://index

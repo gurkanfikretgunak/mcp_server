@@ -1,0 +1,8 @@
+uri: dart:standards://style-guide
+name: Dart Style Guide
+description: Dart style guide with naming conventions and formatting rules
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dart_standards
+  function: read_dart_resource
+uriTemplate: dart:standards://style-guide

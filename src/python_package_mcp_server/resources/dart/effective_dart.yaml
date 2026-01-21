@@ -1,0 +1,8 @@
+uri: dart:standards://effective-dart
+name: Effective Dart Guidelines
+description: Official Effective Dart style guide and best practices
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dart_standards
+  function: read_dart_resource
+uriTemplate: dart:standards://effective-dart

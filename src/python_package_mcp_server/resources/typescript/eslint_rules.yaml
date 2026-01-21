@@ -1,0 +1,8 @@
+uri: typescript:standards://eslint-rules
+name: TypeScript ESLint Rules
+description: ESLint rules for TypeScript code quality and consistency
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.typescript_standards
+  function: read_typescript_resource
+uriTemplate: typescript:standards://eslint-rules

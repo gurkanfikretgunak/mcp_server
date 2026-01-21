@@ -1,0 +1,8 @@
+uri: project://dependencies
+name: Dependency Files
+description: All dependency files across project types
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.project_index
+  function: read_project_index_resource
+uriTemplate: project://dependencies

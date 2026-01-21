@@ -1,0 +1,8 @@
+uri: typescript:standards://tsconfig-options
+name: TypeScript tsconfig Options
+description: Recommended tsconfig.json compiler options and their meanings
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.typescript_standards
+  function: read_typescript_resource
+uriTemplate: typescript:standards://tsconfig-options

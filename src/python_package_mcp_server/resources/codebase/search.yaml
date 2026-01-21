@@ -1,0 +1,8 @@
+uri: codebase://search
+name: Codebase Search
+description: Search codebase by pattern or content
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.codebase
+  function: read_codebase_resource
+uriTemplate: codebase://search?pattern={pattern}&extensions={extensions}

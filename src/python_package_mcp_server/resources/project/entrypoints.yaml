@@ -1,0 +1,8 @@
+uri: project://entrypoints
+name: Entry Points
+description: Entry points and main files discovery
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.project_index
+  function: read_project_index_resource
+uriTemplate: project://entrypoints

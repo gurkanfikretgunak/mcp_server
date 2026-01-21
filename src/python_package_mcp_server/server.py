@@ -16,6 +16,8 @@ from mcp.types import (
 )
 
 from .config import config
+# Resource handlers are imported dynamically via resource loader
+# Keep imports for backward compatibility if needed
 from .resources import codebase, dependencies, packages, project_index, dart_standards, typescript_standards
 from .tools import env, install, sync, dart, typescript
 from .security.auth import AuthMiddleware
@@ -45,252 +47,67 @@ current_user_context: dict[str, Any] = {}
 
 
 # Register resources
+from .resources.loader import get_resource_loader
+
+resource_loader = get_resource_loader()
+
 @server.list_resources()
 async def list_resources() -> list[Resource]:
-    """List all available resources."""
-    resources = []
-    resources.extend(packages.get_package_resources())
-    resources.extend(dependencies.get_dependency_resources())
-    resources.extend(project_index.get_project_index_resources())
-    resources.extend(codebase.get_codebase_resources())
-    resources.extend(dart_standards.get_dart_resources())
-    resources.extend(typescript_standards.get_typescript_resources())
-    return resources
+    """List all available resources.
+    
+    Resources are loaded from YAML files in the resources/ directory.
+    See resources/README.md for information on adding new resources.
+    """
+    return resource_loader.list_resources()
 
 
 @server.read_resource()
 async def read_resource(uri: str, params: dict[str, Any] | None = None) -> str:
-    """Read a resource by URI."""
-    params = params or {} 
+    """Read a resource by URI.
     
-    # Convert URI to string if it's an AnyUrl object (from pydantic)
-    uri_str = str(uri)
-
-    # Package resources
-    if uri_str.startswith("python:packages://"):
-        return packages.read_package_resource(uri_str)
-
-    # Dependency resources
-    if uri_str.startswith("python:dependencies://") or uri_str.startswith("python:project://") or uri_str.startswith("python:environment://"):
-        return dependencies.read_dependency_resource(uri_str)
-
-    # Project index resources
-    if uri_str.startswith("project://"):
-        return project_index.read_project_index_resource(uri_str)
-
-    # Codebase resources
-    if uri_str.startswith("codebase://"):
-        return codebase.read_codebase_resource(uri_str, params)
-
-    # Dart standards resources
-    if uri_str.startswith("dart:standards://"):
-        return dart_standards.read_dart_resource(uri_str)
-
-    # TypeScript standards resources
-    if uri_str.startswith("typescript:standards://"):
-        return typescript_standards.read_typescript_resource(uri_str)
-
-    raise ValueError(f"Unknown resource URI: {uri_str}")
+    Resources are loaded from YAML files in the resources/ directory.
+    Each resource file defines metadata and a handler function.
+    """
+    params = params or {}
+    return resource_loader.read_resource(uri, params)
 
 
 @server.list_resource_templates()
 async def list_resource_templates() -> list[ResourceTemplate]:
-    """List all resource templates."""
-    templates = []
-    templates.extend(packages.get_package_resource_templates())
-    templates.extend(dependencies.get_dependency_resource_templates())
-    templates.extend(project_index.get_project_index_resource_templates())
-    templates.extend(codebase.get_codebase_resource_templates())
-    templates.extend(dart_standards.get_dart_resource_templates())
-    templates.extend(typescript_standards.get_typescript_resource_templates())
-    return templates
+    """List all resource templates.
+    
+    Resource templates are loaded from YAML files in the resources/ directory.
+    """
+    return resource_loader.list_resource_templates()
 
 
 # Register prompts
+from .prompts.loader import get_prompt_loader
+
+prompt_loader = get_prompt_loader()
+
 @server.list_prompts()
 async def list_prompts() -> list[Prompt]:
-    """List all available prompts."""
-    return [
-        Prompt(
-            name="analyze_package_dependencies",
-            description="Analyze package dependencies and suggest updates",
-            arguments=[
-                PromptArgument(
-                    name="package_name",
-                    description="Name of the package to analyze (optional, analyzes all if not provided)",
-                    required=False,
-                ),
-            ],
-        ),
-        Prompt(
-            name="code_review",
-            description="Review code for best practices and potential issues",
-            arguments=[
-                PromptArgument(
-                    name="file_path",
-                    description="Path to the file to review",
-                    required=True,
-                ),
-                PromptArgument(
-                    name="language",
-                    description="Programming language (python, dart, typescript)",
-                    required=False,
-                ),
-            ],
-        ),
-        Prompt(
-            name="project_setup_guide",
-            description="Generate a setup guide for the project",
-            arguments=[
-                PromptArgument(
-                    name="include_dependencies",
-                    description="Include dependency installation instructions",
-                    required=False,
-                ),
-            ],
-        ),
-        Prompt(
-            name="dependency_audit",
-            description="Audit project dependencies for security and updates",
-            arguments=[],
-        ),
-        Prompt(
-            name="code_formatting_check",
-            description="Check if code follows formatting standards",
-            arguments=[
-                PromptArgument(
-                    name="file_path",
-                    description="Path to the file or directory to check",
-                    required=True,
-                ),
-                PromptArgument(
-                    name="language",
-                    description="Programming language (python, dart, typescript)",
-                    required=True,
-                ),
-            ],
-        ),
-    ]
+    """List all available prompts.
+    
+    Prompts are loaded from markdown files in the prompts/ directory.
+    See prompts/README.md for information on adding new prompts.
+    """
+    return prompt_loader.list_prompts()
 
 
 @server.get_prompt()
 async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> GetPromptResult:
-    """Get a prompt with filled arguments."""
+    """Get a prompt with filled arguments.
+    
+    Prompts are loaded from markdown files in the prompts/ directory.
+    Each prompt file contains frontmatter (YAML) with metadata and a template.
+    """
     arguments = arguments or {}
     
-    if name == "analyze_package_dependencies":
-        package_name = arguments.get("package_name", "")
-        if package_name:
-            prompt_text = f"Analyze the dependencies of the '{package_name}' package. Check for:\n"
-        else:
-            prompt_text = "Analyze all project dependencies. Check for:\n"
-        prompt_text += "- Outdated packages that need updates\n"
-        prompt_text += "- Security vulnerabilities\n"
-        prompt_text += "- Unused dependencies\n"
-        prompt_text += "- Dependency conflicts\n"
-        prompt_text += "Provide recommendations for updates and improvements."
-        
-        return GetPromptResult(
-            description="Analyze package dependencies and suggest updates",
-            messages=[
-                PromptMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt_text),
-                ),
-            ],
-        )
-    
-    elif name == "code_review":
-        file_path = arguments.get("file_path", "")
-        language = arguments.get("language", "python")
-        
-        prompt_text = f"Review the code in '{file_path}' ({language}). "
-        prompt_text += "Check for:\n"
-        prompt_text += "- Code quality and best practices\n"
-        prompt_text += "- Potential bugs or issues\n"
-        prompt_text += "- Performance optimizations\n"
-        prompt_text += "- Security concerns\n"
-        prompt_text += "- Code style and formatting\n"
-        prompt_text += "Provide constructive feedback and suggestions."
-        
-        return GetPromptResult(
-            description="Review code for best practices and potential issues",
-            messages=[
-                PromptMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt_text),
-                ),
-            ],
-        )
-    
-    elif name == "project_setup_guide":
-        include_deps = arguments.get("include_dependencies", "true").lower() == "true"
-        
-        prompt_text = "Generate a comprehensive project setup guide. Include:\n"
-        prompt_text += "- Prerequisites and requirements\n"
-        if include_deps:
-            prompt_text += "- Dependency installation instructions\n"
-        prompt_text += "- Environment setup steps\n"
-        prompt_text += "- Configuration instructions\n"
-        prompt_text += "- How to run the project\n"
-        prompt_text += "- Common troubleshooting tips\n"
-        prompt_text += "Make it clear and easy to follow for new developers."
-        
-        return GetPromptResult(
-            description="Generate a setup guide for the project",
-            messages=[
-                PromptMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt_text),
-                ),
-            ],
-        )
-    
-    elif name == "dependency_audit":
-        prompt_text = "Perform a comprehensive dependency audit for this project. Check:\n"
-        prompt_text += "- All installed packages and their versions\n"
-        prompt_text += "- Outdated packages with available updates\n"
-        prompt_text += "- Security vulnerabilities (CVEs)\n"
-        prompt_text += "- License compatibility\n"
-        prompt_text += "- Unused or redundant dependencies\n"
-        prompt_text += "- Dependency conflicts\n"
-        prompt_text += "Provide a detailed report with recommendations."
-        
-        return GetPromptResult(
-            description="Audit project dependencies for security and updates",
-            messages=[
-                PromptMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt_text),
-                ),
-            ],
-        )
-    
-    elif name == "code_formatting_check":
-        file_path = arguments.get("file_path", "")
-        language = arguments.get("language", "python")
-        
-        prompt_text = f"Check if the code in '{file_path}' follows {language} formatting standards. "
-        prompt_text += "Verify:\n"
-        prompt_text += "- Indentation and spacing\n"
-        prompt_text += "- Line length\n"
-        prompt_text += "- Naming conventions\n"
-        prompt_text += "- Import organization\n"
-        prompt_text += "- Code style guidelines\n"
-        prompt_text += "Report any formatting issues and suggest fixes."
-        
-        return GetPromptResult(
-            description="Check if code follows formatting standards",
-            messages=[
-                PromptMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt_text),
-                ),
-            ],
-        )
-    
-    else:
-        raise ValueError(f"Unknown prompt: {name}")
+    # Use prompt loader to get prompts from files
+    return prompt_loader.get_prompt(name, arguments)
+
 
 
 # Register tools

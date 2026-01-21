@@ -99,7 +99,13 @@ GetPromptResult(
 
 ## Available Prompts
 
-This server provides 5 prompts:
+This server provides 18 prompts organized into three categories:
+
+- **General Prompts** (5): Cross-language prompts for common tasks
+- **Dart-Specific Prompts** (6): Prompts tailored for Dart/Flutter development
+- **TypeScript-Specific Prompts** (7): Prompts tailored for TypeScript development
+
+### General Prompts
 
 ### 1. analyze_package_dependencies
 
@@ -272,6 +278,333 @@ Report any formatting issues and suggest fixes.
 - Formatting validation
 - Code quality checks
 - Pre-commit hooks
+
+### Dart-Specific Prompts
+
+### 6. dart_migration_guide
+
+**Purpose**: Generate a migration guide for Dart/Flutter version upgrades.
+
+**Arguments**:
+- `from_version` (optional): Current Dart/Flutter version
+- `to_version` (optional): Target Dart/Flutter version
+- `file_path` (optional): Path to Dart file(s) to migrate
+
+**Example Usage**:
+```json
+{
+  "name": "dart_migration_guide",
+  "arguments": {
+    "from_version": "2.17.0",
+    "to_version": "3.0.0",
+    "file_path": "lib/main.dart"
+  }
+}
+```
+
+**Use Cases**:
+- Version upgrades
+- Breaking changes migration
+- Code modernization
+- Flutter SDK updates
+
+### 7. dart_performance_optimization
+
+**Purpose**: Analyze and optimize Dart code for performance.
+
+**Arguments**:
+- `file_path` (required): Path to Dart file(s) to optimize
+- `focus_area` (optional): Focus area - `build_performance`, `runtime_performance`, or `memory`
+
+**Example Usage**:
+```json
+{
+  "name": "dart_performance_optimization",
+  "arguments": {
+    "file_path": "lib/widgets/home_screen.dart",
+    "focus_area": "build_performance"
+  }
+}
+```
+
+**Use Cases**:
+- Performance profiling
+- Widget optimization
+- Build performance improvement
+- Memory leak detection
+
+### 8. dart_widget_refactoring
+
+**Purpose**: Refactor Flutter widgets following best practices.
+
+**Arguments**:
+- `file_path` (required): Path to Dart file containing widgets
+- `refactoring_type` (optional): Type - `extract_widget`, `optimize_build`, or `state_management`
+
+**Example Usage**:
+```json
+{
+  "name": "dart_widget_refactoring",
+  "arguments": {
+    "file_path": "lib/screens/user_profile.dart",
+    "refactoring_type": "extract_widget"
+  }
+}
+```
+
+**Use Cases**:
+- Widget extraction
+- Build optimization
+- State management improvements
+- Code organization
+
+### 9. dart_test_generation
+
+**Purpose**: Generate comprehensive tests for Dart code.
+
+**Arguments**:
+- `file_path` (required): Path to Dart file to generate tests for
+- `test_framework` (optional): Test framework - `flutter_test` (default) or `test`
+
+**Example Usage**:
+```json
+{
+  "name": "dart_test_generation",
+  "arguments": {
+    "file_path": "lib/services/api_service.dart",
+    "test_framework": "flutter_test"
+  }
+}
+```
+
+**Use Cases**:
+- Test coverage improvement
+- Unit test generation
+- Widget test creation
+- Integration test setup
+
+### 10. dart_null_safety_check
+
+**Purpose**: Check Dart code for null safety compliance and migration needs.
+
+**Arguments**:
+- `file_path` (required): Path to Dart file(s) to check
+
+**Example Usage**:
+```json
+{
+  "name": "dart_null_safety_check",
+  "arguments": {
+    "file_path": "lib/models/user.dart"
+  }
+}
+```
+
+**Use Cases**:
+- Null safety migration
+- Null pointer prevention
+- Type safety improvements
+- Code modernization
+
+### 11. dart_architecture_review
+
+**Purpose**: Review Dart/Flutter project architecture and suggest improvements.
+
+**Arguments**:
+- `project_path` (optional): Path to Dart/Flutter project root
+- `architecture_pattern` (optional): Current pattern - `mvc`, `mvp`, `mvvm`, `bloc`, `provider`
+
+**Example Usage**:
+```json
+{
+  "name": "dart_architecture_review",
+  "arguments": {
+    "project_path": ".",
+    "architecture_pattern": "bloc"
+  }
+}
+```
+
+**Use Cases**:
+- Architecture evaluation
+- Pattern recommendations
+- Code organization review
+- Scalability improvements
+
+### TypeScript-Specific Prompts
+
+### 12. typescript_migration_guide
+
+**Purpose**: Generate migration guide for JavaScript to TypeScript or TypeScript version upgrades.
+
+**Arguments**:
+- `from_language` (optional): Source - `javascript` or TypeScript version
+- `to_version` (optional): Target TypeScript version
+- `file_path` (optional): Path to file(s) to migrate
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_migration_guide",
+  "arguments": {
+    "from_language": "javascript",
+    "to_version": "5.0.0",
+    "file_path": "src/utils/helpers.js"
+  }
+}
+```
+
+**Use Cases**:
+- JavaScript to TypeScript migration
+- TypeScript version upgrades
+- Type annotation addition
+- Module system migration
+
+### 13. typescript_type_optimization
+
+**Purpose**: Optimize TypeScript types for better type safety and performance.
+
+**Arguments**:
+- `file_path` (required): Path to TypeScript file(s) to optimize
+- `focus_area` (optional): Focus - `type_safety`, `performance`, or `readability`
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_type_optimization",
+  "arguments": {
+    "file_path": "src/types/api.ts",
+    "focus_area": "type_safety"
+  }
+}
+```
+
+**Use Cases**:
+- Type safety improvements
+- Performance optimization
+- Code readability
+- Generic type refinement
+
+### 14. typescript_refactoring
+
+**Purpose**: Refactor TypeScript code following best practices.
+
+**Arguments**:
+- `file_path` (required): Path to TypeScript file(s) to refactor
+- `refactoring_type` (optional): Type - `extract_function`, `extract_interface`, or `simplify_types`
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_refactoring",
+  "arguments": {
+    "file_path": "src/components/UserCard.tsx",
+    "refactoring_type": "extract_interface"
+  }
+}
+```
+
+**Use Cases**:
+- Code organization
+- Type simplification
+- Interface extraction
+- Function extraction
+
+### 15. typescript_test_generation
+
+**Purpose**: Generate comprehensive tests for TypeScript code.
+
+**Arguments**:
+- `file_path` (required): Path to TypeScript file to generate tests for
+- `test_framework` (optional): Test framework - `jest` (default), `vitest`, or `mocha`
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_test_generation",
+  "arguments": {
+    "file_path": "src/utils/validator.ts",
+    "test_framework": "jest"
+  }
+}
+```
+
+**Use Cases**:
+- Test coverage improvement
+- Unit test generation
+- Type testing
+- Mock generation
+
+### 16. typescript_config_review
+
+**Purpose**: Review and optimize tsconfig.json configuration.
+
+**Arguments**:
+- `config_path` (optional): Path to tsconfig.json (default: `tsconfig.json`)
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_config_review",
+  "arguments": {
+    "config_path": "tsconfig.json"
+  }
+}
+```
+
+**Use Cases**:
+- Configuration optimization
+- Compiler option tuning
+- Module resolution setup
+- Performance tuning
+
+### 17. typescript_decorator_guide
+
+**Purpose**: Guide for using TypeScript decorators and metadata.
+
+**Arguments**:
+- `use_case` (optional): Use case - `class_decorators`, `method_decorators`, or `property_decorators`
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_decorator_guide",
+  "arguments": {
+    "use_case": "method_decorators"
+  }
+}
+```
+
+**Use Cases**:
+- Decorator implementation
+- Metadata usage
+- Framework patterns (Angular, NestJS)
+- Advanced TypeScript features
+
+### 18. typescript_generics_guide
+
+**Purpose**: Guide for using TypeScript generics effectively.
+
+**Arguments**:
+- `file_path` (optional): Path to TypeScript file to analyze
+- `complexity_level` (optional): Complexity - `basic`, `intermediate`, or `advanced`
+
+**Example Usage**:
+```json
+{
+  "name": "typescript_generics_guide",
+  "arguments": {
+    "file_path": "src/utils/cache.ts",
+    "complexity_level": "intermediate"
+  }
+}
+```
+
+**Use Cases**:
+- Generic type learning
+- Type parameter optimization
+- Advanced type patterns
+- Code refactoring with generics
 
 ## Using Prompts in MCP Inspector
 

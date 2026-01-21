@@ -1,0 +1,8 @@
+uri: codebase://file
+name: File Content
+description: Read specific file content with line numbers
+mimeType: text/plain
+handler:
+  module: python_package_mcp_server.resources.codebase
+  function: read_codebase_resource
+uriTemplate: codebase://file?path={path}

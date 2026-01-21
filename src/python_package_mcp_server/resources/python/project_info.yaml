@@ -1,0 +1,8 @@
+uri: python:project://info
+name: Project Information
+description: Project metadata including pyproject.toml and lock file info
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dependencies
+  function: read_dependency_resource
+uriTemplate: python:project://info

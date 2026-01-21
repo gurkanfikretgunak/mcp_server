@@ -1,0 +1,8 @@
+uri: python:dependencies://tree
+name: Dependency Tree
+description: Visualization of project dependency tree
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dependencies
+  function: read_dependency_resource
+uriTemplate: python:dependencies://tree

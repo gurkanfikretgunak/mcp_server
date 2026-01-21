@@ -1,0 +1,8 @@
+uri: python:environment://active
+name: Active Environment
+description: Details about the active Python environment
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dependencies
+  function: read_dependency_resource
+uriTemplate: python:environment://active

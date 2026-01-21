@@ -1,0 +1,8 @@
+uri: codebase://symbols
+name: Code Symbols
+description: Extract symbols (functions, classes) from codebase
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.codebase
+  function: read_codebase_resource
+uriTemplate: codebase://symbols?path={path}

@@ -1,0 +1,8 @@
+uri: python:packages://outdated
+name: Outdated Packages
+description: List of packages with available updates
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.packages
+  function: read_package_resource
+uriTemplate: python:packages://outdated

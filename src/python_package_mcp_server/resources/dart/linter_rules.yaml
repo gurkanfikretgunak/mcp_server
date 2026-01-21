@@ -1,0 +1,8 @@
+uri: dart:standards://linter-rules
+name: Dart Linter Rules
+description: Complete list of Dart linter rules and their descriptions
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.dart_standards
+  function: read_dart_resource
+uriTemplate: dart:standards://linter-rules
