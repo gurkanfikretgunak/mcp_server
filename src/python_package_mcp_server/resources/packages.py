@@ -15,39 +15,21 @@ def get_package_resources() -> list[Resource]:
     Returns:
         List of resource definitions
     """
-    pm_wrapper = PackageManagerWrapper(config.project_root)
-
-    resources = []
-
-    # Installed packages resource
-    try:
-        installed = pm_wrapper.list_installed()
-        resources.append(
-            Resource(
-                uri="python:packages://installed",
-                name="Installed Packages",
-                description="List of all installed Python packages with versions",
-                mimeType="application/json",
-            )
-        )
-    except Exception:
-        pass
-
-    # Outdated packages resource
-    try:
-        outdated = pm_wrapper.list_outdated()
-        resources.append(
-            Resource(
-                uri="python:packages://outdated",
-                name="Outdated Packages",
-                description="List of packages with available updates",
-                mimeType="application/json",
-            )
-        )
-    except Exception:
-        pass
-
-    return resources
+    # Always return resources - errors will be handled when reading
+    return [
+        Resource(
+            uri="python:packages://installed",
+            name="Installed Packages",
+            description="List of all installed Python packages with versions",
+            mimeType="application/json",
+        ),
+        Resource(
+            uri="python:packages://outdated",
+            name="Outdated Packages",
+            description="List of packages with available updates",
+            mimeType="application/json",
+        ),
+    ]
 
 
 def read_package_resource(uri: str) -> str:
@@ -60,17 +42,26 @@ def read_package_resource(uri: str) -> str:
         Resource content as JSON string
     """
     pm_wrapper = PackageManagerWrapper(config.project_root)
+    
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
 
-    if uri == "python:packages://installed":
-        packages = pm_wrapper.list_installed()
-        return json.dumps({"packages": packages}, indent=2)
+    if uri_str == "python:packages://installed":
+        try:
+            packages = pm_wrapper.list_installed()
+            return json.dumps({"packages": packages}, indent=2)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to list installed packages: {str(e)}"}, indent=2)
 
-    elif uri == "python:packages://outdated":
-        packages = pm_wrapper.list_outdated()
-        return json.dumps({"outdated": packages}, indent=2)
+    elif uri_str == "python:packages://outdated":
+        try:
+            packages = pm_wrapper.list_outdated()
+            return json.dumps({"outdated": packages}, indent=2)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to list outdated packages: {str(e)}"}, indent=2)
 
     else:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 def get_package_resource_templates() -> list[ResourceTemplate]:

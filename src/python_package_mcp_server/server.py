@@ -32,33 +32,36 @@ async def list_resources() -> list[Resource]:
 @server.read_resource()
 async def read_resource(uri: str, params: dict[str, Any] | None = None) -> str:
     """Read a resource by URI."""
-    params = params or {}
+    params = params or {} 
+    
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
 
     # Package resources
-    if uri.startswith("python:packages://"):
-        return packages.read_package_resource(uri)
+    if uri_str.startswith("python:packages://"):
+        return packages.read_package_resource(uri_str)
 
     # Dependency resources
-    if uri.startswith("python:dependencies://") or uri.startswith("python:project://") or uri.startswith("python:environment://"):
-        return dependencies.read_dependency_resource(uri)
+    if uri_str.startswith("python:dependencies://") or uri_str.startswith("python:project://") or uri_str.startswith("python:environment://"):
+        return dependencies.read_dependency_resource(uri_str)
 
     # Project index resources
-    if uri.startswith("project://"):
-        return project_index.read_project_index_resource(uri)
+    if uri_str.startswith("project://"):
+        return project_index.read_project_index_resource(uri_str)
 
     # Codebase resources
-    if uri.startswith("codebase://"):
-        return codebase.read_codebase_resource(uri, params)
+    if uri_str.startswith("codebase://"):
+        return codebase.read_codebase_resource(uri_str, params)
 
     # Dart standards resources
-    if uri.startswith("dart:standards://"):
-        return dart_standards.read_dart_resource(uri)
+    if uri_str.startswith("dart:standards://"):
+        return dart_standards.read_dart_resource(uri_str)
 
     # TypeScript standards resources
-    if uri.startswith("typescript:standards://"):
-        return typescript_standards.read_typescript_resource(uri)
+    if uri_str.startswith("typescript:standards://"):
+        return typescript_standards.read_typescript_resource(uri_str)
 
-    raise ValueError(f"Unknown resource URI: {uri}")
+    raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 @server.list_resource_templates()

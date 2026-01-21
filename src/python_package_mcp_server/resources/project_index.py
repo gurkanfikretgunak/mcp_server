@@ -105,8 +105,11 @@ def read_project_index_resource(uri: str) -> str:
     """
     project_root = config.project_root or Path.cwd()
     scanner = ProjectScanner(project_root)
+    
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
 
-    if uri == "project://index":
+    if uri_str == "project://index":
         structure = scanner.scan_structure()
         config_files = scanner.find_config_files()
         dependencies = scanner.find_dependency_files()
@@ -125,32 +128,32 @@ def read_project_index_resource(uri: str) -> str:
         }
         return json.dumps(index, indent=2)
 
-    elif uri == "project://structure":
+    elif uri_str == "project://structure":
         structure = scanner.scan_structure()
         return json.dumps(structure, indent=2)
 
-    elif uri == "project://config":
+    elif uri_str == "project://config":
         config_files = scanner.find_config_files()
         return json.dumps({"config_files": config_files}, indent=2)
 
-    elif uri == "project://dependencies":
+    elif uri_str == "project://dependencies":
         dependencies = scanner.find_dependency_files()
         return json.dumps({"dependencies": dependencies}, indent=2)
 
-    elif uri == "project://readme":
+    elif uri_str == "project://readme":
         readmes = scanner.find_readme_files()
         return json.dumps({"readmes": readmes}, indent=2)
 
-    elif uri == "project://entrypoints":
+    elif uri_str == "project://entrypoints":
         entry_points = scanner.find_entry_points()
         return json.dumps({"entry_points": entry_points}, indent=2)
 
-    elif uri == "project://tests":
+    elif uri_str == "project://tests":
         tests = scanner.find_test_files()
         return json.dumps({"tests": tests}, indent=2)
 
     else:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 def get_project_index_resource_templates() -> list[ResourceTemplate]:

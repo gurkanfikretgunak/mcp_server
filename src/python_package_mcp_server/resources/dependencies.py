@@ -15,49 +15,27 @@ def get_dependency_resources() -> list[Resource]:
     Returns:
         List of resource definitions
     """
-    pm_wrapper = PackageManagerWrapper(config.project_root)
-
-    resources = []
-
-    # Dependency tree resource
-    try:
-        tree = pm_wrapper.get_dependency_tree()
-        resources.append(
-            Resource(
-                uri="python:dependencies://tree",
-                name="Dependency Tree",
-                description="Visualization of project dependency tree",
-                mimeType="application/json",
-            )
-        )
-    except Exception:
-        pass
-
-    # Project info resource
-    try:
-        info = pm_wrapper.get_project_info()
-        resources.append(
-            Resource(
-                uri="python:project://info",
-                name="Project Information",
-                description="Project metadata including pyproject.toml and lock file info",
-                mimeType="application/json",
-            )
-        )
-    except Exception:
-        pass
-
-    # Active environment resource
-    resources.append(
+    # Always return resources - errors will be handled when reading
+    return [
+        Resource(
+            uri="python:dependencies://tree",
+            name="Dependency Tree",
+            description="Visualization of project dependency tree",
+            mimeType="application/json",
+        ),
+        Resource(
+            uri="python:project://info",
+            name="Project Information",
+            description="Project metadata including pyproject.toml and lock file info",
+            mimeType="application/json",
+        ),
         Resource(
             uri="python:environment://active",
             name="Active Environment",
             description="Details about the active Python environment",
             mimeType="application/json",
-        )
-    )
-
-    return resources
+        ),
+    ]
 
 
 def read_dependency_resource(uri: str) -> str:
@@ -70,29 +48,41 @@ def read_dependency_resource(uri: str) -> str:
         Resource content as JSON string
     """
     pm_wrapper = PackageManagerWrapper(config.project_root)
+    
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
 
-    if uri == "python:dependencies://tree":
-        tree = pm_wrapper.get_dependency_tree()
-        return json.dumps(tree, indent=2)
+    if uri_str == "python:dependencies://tree":
+        try:
+            tree = pm_wrapper.get_dependency_tree()
+            return json.dumps(tree, indent=2)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to get dependency tree: {str(e)}"}, indent=2)
 
-    elif uri == "python:project://info":
-        info = pm_wrapper.get_project_info()
-        return json.dumps(info, indent=2)
+    elif uri_str == "python:project://info":
+        try:
+            info = pm_wrapper.get_project_info()
+            return json.dumps(info, indent=2)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to get project info: {str(e)}"}, indent=2)
 
-    elif uri == "python:environment://active":
-        import sys
-        import os
+    elif uri_str == "python:environment://active":
+        try:
+            import sys
+            import os
 
-        env_info = {
-            "python_version": sys.version,
-            "python_executable": sys.executable,
-            "virtual_env": os.environ.get("VIRTUAL_ENV"),
-            "path": sys.path[:5],  # First 5 entries
-        }
-        return json.dumps(env_info, indent=2)
+            env_info = {
+                "python_version": sys.version,
+                "python_executable": sys.executable,
+                "virtual_env": os.environ.get("VIRTUAL_ENV"),
+                "path": sys.path[:5],  # First 5 entries
+            }
+            return json.dumps(env_info, indent=2)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to get environment info: {str(e)}"}, indent=2)
 
     else:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 def get_dependency_resource_templates() -> list[ResourceTemplate]:

@@ -49,7 +49,10 @@ def read_typescript_resource(uri: str) -> str:
     Returns:
         Resource content as JSON string
     """
-    if uri == "typescript:standards://style-guide":
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
+    
+    if uri_str == "typescript:standards://style-guide":
         return json.dumps({
             "title": "TypeScript Style Guide",
             "naming_conventions": {
@@ -74,7 +77,7 @@ def read_typescript_resource(uri: str) -> str:
             },
         }, indent=2)
 
-    elif uri == "typescript:standards://tsconfig-options":
+    elif uri_str == "typescript:standards://tsconfig-options":
         return json.dumps({
             "title": "TypeScript tsconfig.json Options",
             "recommended_config": {
@@ -110,7 +113,7 @@ def read_typescript_resource(uri: str) -> str:
             },
         }, indent=2)
 
-    elif uri == "typescript:standards://eslint-rules":
+    elif uri_str == "typescript:standards://eslint-rules":
         return json.dumps({
             "title": "TypeScript ESLint Rules",
             "recommended_packages": [
@@ -139,7 +142,7 @@ def read_typescript_resource(uri: str) -> str:
             },
         }, indent=2)
 
-    elif uri == "typescript:standards://best-practices":
+    elif uri_str == "typescript:standards://best-practices":
         return json.dumps({
             "title": "TypeScript Best Practices",
             "type_safety": {
@@ -190,7 +193,7 @@ def read_typescript_resource(uri: str) -> str:
         }, indent=2)
 
     else:
-        raise ValueError(f"Unknown TypeScript resource URI: {uri}")
+        raise ValueError(f"Unknown TypeScript resource URI: {uri_str}")
 
 
 def get_typescript_resource_templates() -> list[ResourceTemplate]:

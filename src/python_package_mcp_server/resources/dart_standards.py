@@ -49,7 +49,10 @@ def read_dart_resource(uri: str) -> str:
     Returns:
         Resource content as JSON string
     """
-    if uri == "dart:standards://effective-dart":
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
+    
+    if uri_str == "dart:standards://effective-dart":
         return json.dumps({
             "title": "Effective Dart Guidelines",
             "sections": {
@@ -86,7 +89,7 @@ def read_dart_resource(uri: str) -> str:
             },
         }, indent=2)
 
-    elif uri == "dart:standards://style-guide":
+    elif uri_str == "dart:standards://style-guide":
         return json.dumps({
             "title": "Dart Style Guide",
             "naming_conventions": {
@@ -109,7 +112,7 @@ def read_dart_resource(uri: str) -> str:
             },
         }, indent=2)
 
-    elif uri == "dart:standards://linter-rules":
+    elif uri_str == "dart:standards://linter-rules":
         return json.dumps({
             "title": "Dart Linter Rules",
             "recommended_packages": [
@@ -141,7 +144,7 @@ def read_dart_resource(uri: str) -> str:
             ],
         }, indent=2)
 
-    elif uri == "dart:standards://best-practices":
+    elif uri_str == "dart:standards://best-practices":
         return json.dumps({
             "title": "Dart Best Practices",
             "null_safety": {
@@ -183,7 +186,7 @@ def read_dart_resource(uri: str) -> str:
         }, indent=2)
 
     else:
-        raise ValueError(f"Unknown Dart resource URI: {uri}")
+        raise ValueError(f"Unknown Dart resource URI: {uri_str}")
 
 
 def get_dart_resource_templates() -> list[ResourceTemplate]:

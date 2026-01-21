@@ -12,6 +12,24 @@ from python_package_mcp_server.resources import codebase, dependencies, packages
 class TestPackageResources:
     """Tests for package resources."""
 
+    def test_get_package_resources_always_returns_resources(self):
+        """Test that package resources are always returned."""
+        resources = packages.get_package_resources()
+        
+        assert len(resources) == 2
+        assert any(r.uri == "python:packages://installed" for r in resources)
+        assert any(r.uri == "python:packages://outdated" for r in resources)
+
+    def test_get_package_resource_templates_matches_resources(self):
+        """Test that resource templates match available resources."""
+        resources = packages.get_package_resources()
+        templates = packages.get_package_resource_templates()
+        
+        resource_uris = {r.uri for r in resources}
+        template_uris = {t.uriTemplate for t in templates}
+        
+        assert resource_uris == template_uris
+
     @patch("python_package_mcp_server.resources.packages.PackageManagerWrapper")
     def test_read_installed_packages(self, mock_wrapper_class):
         """Test reading installed packages resource."""
@@ -39,9 +57,41 @@ class TestPackageResources:
         assert "outdated" in data
         assert len(data["outdated"]) == 1
 
+    @patch("python_package_mcp_server.resources.packages.PackageManagerWrapper")
+    def test_read_package_resource_handles_errors(self, mock_wrapper_class):
+        """Test that reading package resources handles errors gracefully."""
+        mock_wrapper = MagicMock()
+        mock_wrapper.list_installed.side_effect = Exception("Test error")
+        mock_wrapper_class.return_value = mock_wrapper
+
+        result = packages.read_package_resource("python:packages://installed")
+        data = json.loads(result)
+
+        assert "error" in data
+        assert "Failed to list installed packages" in data["error"]
+
 
 class TestDependencyResources:
     """Tests for dependency resources."""
+
+    def test_get_dependency_resources_always_returns_resources(self):
+        """Test that dependency resources are always returned."""
+        resources = dependencies.get_dependency_resources()
+        
+        assert len(resources) == 3
+        assert any(r.uri == "python:dependencies://tree" for r in resources)
+        assert any(r.uri == "python:project://info" for r in resources)
+        assert any(r.uri == "python:environment://active" for r in resources)
+
+    def test_get_dependency_resource_templates_matches_resources(self):
+        """Test that resource templates match available resources."""
+        resources = dependencies.get_dependency_resources()
+        templates = dependencies.get_dependency_resource_templates()
+        
+        resource_uris = {r.uri for r in resources}
+        template_uris = {t.uriTemplate for t in templates}
+        
+        assert resource_uris == template_uris
 
     @patch("python_package_mcp_server.resources.dependencies.PackageManagerWrapper")
     def test_read_dependency_tree(self, mock_wrapper_class):
@@ -68,6 +118,14 @@ class TestDependencyResources:
 
         assert "pyproject" in data
         assert "lock_file" in data
+
+    def test_read_environment_resource(self):
+        """Test reading active environment resource."""
+        result = dependencies.read_dependency_resource("python:environment://active")
+        data = json.loads(result)
+
+        assert "python_version" in data
+        assert "python_executable" in data
 
 
 class TestProjectIndexResources:

@@ -64,8 +64,11 @@ def read_codebase_resource(uri: str, query_params: Optional[dict[str, str]] = No
     project_root = config.project_root or Path.cwd()
     scanner = ProjectScanner(project_root)
     query_params = query_params or {}
+    
+    # Convert URI to string if it's an AnyUrl object (from pydantic)
+    uri_str = str(uri)
 
-    if uri.startswith("codebase://search"):
+    if uri_str.startswith("codebase://search"):
         pattern = query_params.get("pattern", query_params.get("q", ""))
         if not pattern:
             return json.dumps({"error": "Pattern parameter required"}, indent=2)
@@ -74,7 +77,7 @@ def read_codebase_resource(uri: str, query_params: Optional[dict[str, str]] = No
         matches = scanner.search_codebase(pattern, extensions)
         return json.dumps({"matches": matches, "count": len(matches)}, indent=2)
 
-    elif uri.startswith("codebase://file"):
+    elif uri_str.startswith("codebase://file"):
         file_path = query_params.get("path", query_params.get("file", ""))
         if not file_path:
             return json.dumps({"error": "File path parameter required"}, indent=2)
@@ -91,7 +94,7 @@ def read_codebase_resource(uri: str, query_params: Optional[dict[str, str]] = No
         except Exception as e:
             return json.dumps({"error": f"Failed to read file: {str(e)}"}, indent=2)
 
-    elif uri.startswith("codebase://symbols"):
+    elif uri_str.startswith("codebase://symbols"):
         file_path = query_params.get("path", query_params.get("file", ""))
         if not file_path:
             return json.dumps({"error": "File path parameter required"}, indent=2)
@@ -104,7 +107,7 @@ def read_codebase_resource(uri: str, query_params: Optional[dict[str, str]] = No
         return json.dumps({"symbols": symbols, "count": len(symbols)}, indent=2)
 
     else:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 def get_codebase_resource_templates() -> list[ResourceTemplate]:

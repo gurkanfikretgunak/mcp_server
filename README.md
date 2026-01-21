@@ -323,6 +323,14 @@ Once the inspector starts, it will open a web UI in your browser (default: `http
 - Check host and port match server configuration
 - Verify authentication if enabled
 
+#### Comprehensive Guide
+
+For detailed step-by-step instructions, examples, and troubleshooting, see the [MCP Inspector Usage Guide](docs/inspector-guide.md). This guide covers:
+- Detailed walkthrough of all resources and tools
+- Practical workflow examples
+- Troubleshooting common issues
+- Best practices for using the inspector
+
 For more information, see the [official MCP Inspector documentation](https://modelcontextprotocol.io/docs/tools/inspector).
 
 ## License
