@@ -1,0 +1,8 @@
+uri: python:standards://style-guide
+name: Python Style Guide (PEP 8)
+description: PEP 8 style guide with naming conventions and formatting rules
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.python_standards
+  function: read_python_resource
+uriTemplate: python:standards://style-guide

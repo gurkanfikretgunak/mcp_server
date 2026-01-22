@@ -1,0 +1,8 @@
+uri: python:standards://best-practices
+name: Python Best Practices
+description: Python best practices for code quality and maintainability
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.python_standards
+  function: read_python_resource
+uriTemplate: python:standards://best-practices

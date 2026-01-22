@@ -18,8 +18,8 @@ from mcp.types import (
 from .config import config
 # Resource handlers are imported dynamically via resource loader
 # Keep imports for backward compatibility if needed
-from .resources import codebase, dependencies, packages, project_index, dart_standards, typescript_standards
-from .tools import env, install, sync, dart, typescript
+from .resources import codebase, dependencies, packages, project_index, dart_standards, typescript_standards, python_standards
+from .tools import env, install, sync, dart, typescript, python
 from .security.auth import AuthMiddleware
 from .security.user_manager import UserManager
 
@@ -120,6 +120,7 @@ async def list_tools() -> list:
     tools.extend(env.get_env_tools())
     tools.extend(dart.get_dart_tools())
     tools.extend(typescript.get_typescript_tools())
+    tools.extend(python.get_python_tools())
     if config.enable_user_auth and auth:
         tools.extend(auth.get_auth_tools())
     return tools
@@ -197,6 +198,18 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> list:
         return await typescript.handle_typescript_generate_code(arguments)
     elif name == "typescript_check_standards":
         return await typescript.handle_typescript_check_standards(arguments)
+
+    # Python tools
+    elif name == "python_format":
+        return await python.handle_python_format(arguments)
+    elif name == "python_lint":
+        return await python.handle_python_lint(arguments)
+    elif name == "python_type_check":
+        return await python.handle_python_type_check(arguments)
+    elif name == "python_generate_code":
+        return await python.handle_python_generate_code(arguments)
+    elif name == "python_check_standards":
+        return await python.handle_python_check_standards(arguments)
 
     # Auth tools (only available when user auth is enabled)
     elif name == "create_user":

@@ -169,8 +169,8 @@ class PromptLoader:
             logger.warning("prompts_directory_not_found", path=str(self.prompts_dir))
             return
 
-        # Load from subdirectories: general, dart, typescript
-        categories = ["general", "dart", "typescript"]
+        # Load from subdirectories: general, dart, typescript, python
+        categories = ["general", "dart", "typescript", "python"]
         
         for category in categories:
             category_dir = self.prompts_dir / category

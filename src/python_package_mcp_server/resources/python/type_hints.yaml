@@ -1,0 +1,8 @@
+uri: python:standards://type-hints
+name: Python Type Hints
+description: Type hinting guidelines (PEP 484, 526, 544, 585, 604)
+mimeType: application/json
+handler:
+  module: python_package_mcp_server.resources.python_standards
+  function: read_python_resource
+uriTemplate: python:standards://type-hints
